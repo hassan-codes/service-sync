@@ -15,13 +15,12 @@ class AuthService
         ];
         if (! $token = auth()->attempt($credentials)) {
             return response()->json([
-                'error' => 'Unauthorized',
+                'error' => 'Unauthenticated',
                 'message' => 'Invalid credentials'
             ], 401);
         }
 
         // TODO: insert into login table
-
         return $this->createNewToken($token);
     }
 
@@ -34,6 +33,14 @@ class AuthService
     }
 
     protected function createNewToken($token){
+        $user = auth()->user();
+        if (! $user->is_active) {
+            return response()->json([
+                'error' => 'Unauthenticated',
+                'message' => 'Attempt to login with inactive account'
+            ], 401);
+        }
+
         return response()->json(
             [
                 'access_token' => $token,
