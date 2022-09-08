@@ -3,6 +3,7 @@
 namespace App\Services\v1;
 
 use App\Http\Requests\v1\LoginRequest;
+use Illuminate\Support\Facades\Auth;
 
 class AuthService
 {
@@ -24,13 +25,14 @@ class AuthService
         return $this->createNewToken($token);
     }
 
-    /**
-     * Get the token array structure.
-     *
-     * @param  string $token
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
+    public function logout()
+    {
+        auth()->logout();
+        return response()->json([
+            'message' => 'User successfully logged out'
+        ]);
+    }
+
     protected function createNewToken($token){
         return response()->json(
             [
