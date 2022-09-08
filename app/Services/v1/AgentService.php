@@ -118,7 +118,7 @@ class AgentService
             ], 401);
         }
 
-        try{    
+        try{
             User::where('id', $userId)
                 ->where('role', 'agent')
                 ->update([
@@ -136,6 +136,41 @@ class AgentService
         }
 
         return $agent;
+    }
+
+    public function deactivate($userId)
+    {
+        $user = auth()->user();
+
+        if (! $this->isPasswordReset($user)) {
+            return response()->json([
+                'message' => 'Unauthorized. You must reset your password',
+            ], 401);
+        }
+
+        if (! $this->isAdmin($user)) {
+            return response()->json([
+                'message' => 'Unauthorized. Illegal action attempted',
+            ], 401);
+        }
+
+        try {
+            User::where('id', $userId)
+                ->where('role', 'agent')
+                ->where('is_active', true)
+                ->update(['is_active' => false]);
+            $agent = User::where('id', $userId)->first();
+        } catch (QueryException $exception) {
+            error_log($exception->getMessage());
+            // TODO: email error to sysadmin
+            return response()->json([
+                'error' => 'Failed to deactivate',
+            ], 422);
+        }
+
+        return response()->json([
+            'message' => 'Successfully deactivated account of ' . $agent->last_name,
+        ], 200);
     }
 
     protected function isPasswordReset(User $user)

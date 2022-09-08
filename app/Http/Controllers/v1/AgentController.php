@@ -64,6 +64,18 @@ class AgentController extends Controller
     }
 
     /**
+     * Deactivate agent
+     *
+     * @param UpdateAgentRequest $request
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function deactivate(int $id)
+    {
+        return $this->agentService->deactivate($id);
+    }
+
+    /**
      * Remove the specified resource from storage.
      *
      * @param  int  $id
