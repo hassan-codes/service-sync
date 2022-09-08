@@ -24,9 +24,9 @@ class UpdateAdminRequest extends FormRequest
     public function rules()
     {
         return [
-            'first_name' => 'string|min:3',
-            'last_name' => 'string|min:3',
-            'email' => 'email:rfc,dns',
+            'first_name' => 'required|string|min:3',
+            'last_name' => 'required|string|min:3',
+            'email' => 'required|email:rfc,dns',
         ];
     }
 }
