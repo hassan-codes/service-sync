@@ -76,12 +76,12 @@ class AdminService
             ], 401);
         }
 
-        $admin = User::where('id', $userId)->first();
         try {
             User::where('id', $userId)
                 ->where('role', 'admin')
                 ->where('is_active', true)
                 ->update(['is_active' => false]);
+            $admin = User::where('id', $userId)->first();
         } catch (QueryException $exception) {
             error_log($exception->getMessage());
             // TODO: email error to sysadmin
