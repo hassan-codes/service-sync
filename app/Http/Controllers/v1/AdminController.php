@@ -25,12 +25,9 @@ class AdminController extends Controller
      *
      * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
-    public function index(User $user)
+    public function index()
     {
-        return AdminResource::collection(User::where('role', 'admin')
-            ->orderBy('first_name', 'ASC')
-            ->orderBy('last_name', 'ASC')
-            ->paginate());
+        return $this->adminService->fetch();
     }
 
     /**
@@ -52,7 +49,7 @@ class AdminController extends Controller
      */
     public function show($id)
     {
-        return AdminResource::collection(User::where('id', $id)->get());
+        return $this->adminService->fetch($id);
     }
 
     /**
