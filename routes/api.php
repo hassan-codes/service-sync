@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\v1\AdminController;
 use App\Http\Controllers\v1\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -21,6 +22,12 @@ Route::post('v1/auth/login', [AuthController::class, 'login']);
 Route::group([
     'middleware' => 'api',
     'prefix' => 'v1/auth'
-], function ($router) {
-    Route::post('/logout', [AuthController::class, 'logout']);
+], function () {
+    Route::get('/logout', [AuthController::class, 'logout']);
+});
+
+Route::middleware('auth:api')->group(function(){
+    Route::prefix('v1')->group(function(){
+        Route::post('administrators/', [AdminController::class, 'store']);
+    });
 });
