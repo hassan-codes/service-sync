@@ -28,6 +28,10 @@ Route::group([
 
 Route::middleware('auth:api')->group(function(){
     Route::prefix('v1')->group(function(){
-        Route::post('administrators/', [AdminController::class, 'store']);
+        Route::post('admins/', [AdminController::class, 'store']);
+        Route::get('admins/', [AdminController::class, 'index']);
+        Route::get('admins/{admin}', [AdminController::class, 'show']);
+        Route::get('admins/deactivation/{admin}', [AdminController::class, 'deactivate']);
+        Route::put('admins/{admin}', [AdminController::class, 'update']);
     });
 });
