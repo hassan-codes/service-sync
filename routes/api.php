@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\v1\AdminController;
+use App\Http\Controllers\v1\AgentController;
 use App\Http\Controllers\v1\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -28,10 +29,22 @@ Route::group([
 
 Route::middleware('auth:api')->group(function(){
     Route::prefix('v1')->group(function(){
+        /**
+         * Admin endpoints
+         */
         Route::post('admins/', [AdminController::class, 'store']);
         Route::get('admins/', [AdminController::class, 'index']);
         Route::get('admins/{admin}', [AdminController::class, 'show']);
         Route::get('admins/deactivation/{admin}', [AdminController::class, 'deactivate']);
         Route::put('admins/{admin}', [AdminController::class, 'update']);
+
+        /**
+         * Agent endpoints
+         */
+        Route::post('agents/', [AgentController::class, 'store']);
+        Route::get('agents/', [AgentController::class, 'index']);
+        Route::get('agents/{agent}', [AgentController::class, 'show']);
+        Route::get('agents/deactivation/{agent}', [AgentController::class, 'deactivate']);
+        Route::put('agents/{agent}', [AgentController::class, 'update']);
     });
 });
