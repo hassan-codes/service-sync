@@ -3,6 +3,7 @@
 namespace App\Services\v1;
 
 use App\Http\Requests\v1\StoreAdminRequest;
+use App\Http\Requests\v1\UpdateAdminRequest;
 use App\Models\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Hash;
@@ -42,7 +43,7 @@ class AdminService
             error_log($exception->getMessage());
             // TODO: email error to sysadmin
             return response()->json([
-                'message' => 'Failed to create admin account. Try again!',
+                'error' => 'Failed to create admin account. Try again!',
             ], 422);
         }
 
@@ -56,6 +57,49 @@ class AdminService
                 'password' => $password
             ]
         ], 201);
+    }
+
+    public function deactivate(int $userId)
+    {
+        $user = User::where('id', $userId)->first();
+        try {
+            User::where('id', $userId)
+                ->where('role', 'admin')
+                ->where('is_active', true)
+                ->update(['is_active' => false]);
+        } catch (QueryException $exception) {
+            error_log($exception->getMessage());
+            // TODO: email error to sysadmin
+            return response()->json([
+                'error' => 'Failed to deactivate',
+            ], 500);
+        }
+
+        return response()->json([
+            'message' => 'Successfully deactivated account of ' . $user->last_name,
+        ], 200);
+    }
+
+    public function update(UpdateAdminRequest $request, int $id)
+    {
+        $user = User::where('id', $id)->first();
+        try{
+            User::where('id', $id)
+                ->where('role', 'admin')
+                ->update([
+                    'first_name' => strtoupper($request->first_name),
+                    'last_name' => strtoupper($request->last_name),
+                    'email' => strtolower($request->email)
+                ]);
+        } catch (QueryException $exception) {
+            error_log($exception->getMessage());
+            // TODO: email error to sysadmin
+            return response()->json([
+                'error' => 'Failed to update',
+            ], 500);
+        }
+
+        return $user;
     }
 
     protected function isPasswordReset(User $user)

@@ -4,6 +4,8 @@ namespace App\Http\Controllers\v1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\v1\StoreAdminRequest;
+use App\Http\Requests\v1\UpdateAdminRequest;
+use App\Http\Resources\v1\AdminResource;
 use App\Models\User;
 use App\Services\v1\AdminService;
 use Illuminate\Database\QueryException;
@@ -21,18 +23,21 @@ class AdminController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
-    public function index()
+    public function index(User $user)
     {
-        //
+        return AdminResource::collection(User::where('role', 'admin')
+            ->orderBy('first_name', 'ASC')
+            ->orderBy('last_name', 'ASC')
+            ->paginate());
     }
 
     /**
      * Store a newly created resource in storage.
      *
      * @param StoreAdminRequest $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function store(StoreAdminRequest $request)
     {
@@ -43,23 +48,33 @@ class AdminController extends Controller
      * Display the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
     public function show($id)
     {
-        //
+        return AdminResource::collection(User::where('id', $id)->get());
+    }
+
+    /**
+     * Deactivate user account
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function deactivate($id)
+    {
+        return $this->adminService->deactivate($id);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param UpdateAdminRequest $request
+     * @param int $id
      */
-    public function update(Request $request, $id)
+    public function update(UpdateAdminRequest $request, int $id)
     {
-        //
+        return $this->adminService->update($request, $id);
     }
 
     /**
