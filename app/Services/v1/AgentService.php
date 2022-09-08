@@ -3,6 +3,8 @@
 namespace App\Services\v1;
 
 use App\Http\Requests\v1\StoreAgentRequest;
+use App\Http\Requests\v1\UpdateAgentRequest;
+use App\Http\Resources\v1\AgentResource;
 use App\Models\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Hash;
@@ -58,6 +60,82 @@ class AgentService
                 'password' => $password
             ]
         ], 201);
+    }
+
+    public function fetch(int $userId = 0)
+    {
+        $user = auth()->user();
+
+        if (! $this->isPasswordReset($user)) {
+            return response()->json([
+                'message' => 'Unauthorized. You must reset your password',
+            ], 401);
+        }
+
+        if (! $this->isAdmin($user)) {
+            return response()->json([
+                'message' => 'Unauthorized. Illegal action attempted',
+            ], 401);
+        }
+
+        try {
+            $agents = AgentResource::collection(User::where('role', 'agent')
+                ->orderBy('first_name', 'ASC')
+                ->orderBy('last_name', 'ASC')
+                ->paginate());
+
+            if ($userId !== 0) {
+                $agents = AgentResource::collection(User::where('role', 'agent')
+                    ->where('id', $userId)
+                    ->orderBy('first_name', 'ASC')
+                    ->orderBy('last_name', 'ASC')
+                    ->paginate());
+            }
+        } catch (QueryException $exception) {
+            error_log($exception->getMessage());
+            // TODO: email error to sysadmin
+            return response()->json([
+                'error' => 'Failed to list agents',
+            ], 422);
+        }
+
+        return $agents;
+    }
+
+    public function update(UpdateAgentRequest $request, int $userId)
+    {
+        $user = auth()->user();
+
+        if (! $this->isPasswordReset($user)) {
+            return response()->json([
+                'message' => 'Unauthorized. You must reset your password',
+            ], 401);
+        }
+
+        if (! $this->isAdmin($user)) {
+            return response()->json([
+                'message' => 'Unauthorized. Illegal action attempted',
+            ], 401);
+        }
+
+        try{    
+            User::where('id', $userId)
+                ->where('role', 'agent')
+                ->update([
+                    'first_name' => strtoupper($request->first_name),
+                    'last_name' => strtoupper($request->last_name),
+                    'email' => strtolower($request->email)
+                ]);
+            $agent = User::where('id', $userId)->first();
+        } catch (QueryException $exception) {
+            error_log($exception->getMessage());
+            // TODO: email error to sysadmin
+            return response()->json([
+                'error' => 'Failed to update',
+            ], 422);
+        }
+
+        return $agent;
     }
 
     protected function isPasswordReset(User $user)
