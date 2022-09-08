@@ -2,8 +2,10 @@
 
 namespace Database\Seeders;
 
+use Carbon\Carbon;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class CreateAdminSeeder extends Seeder
@@ -15,11 +17,13 @@ class CreateAdminSeeder extends Seeder
      */
     public function run()
     {
-        \App\Models\User::factory()->create([
-            'name' => 'Test User',
+        DB::table('users')->insert([
+            'first_name' => 'Test',
+            'last_name' => 'User',
             'email' => 'test.user@gmail.com',
-            'role' => 'admin',
             'password' => Hash::make('password'),
+            'role' => 'admin',
+            'password_reset_at' => Carbon::now(),
         ]);
     }
 }
