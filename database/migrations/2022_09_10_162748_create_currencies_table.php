@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('country');
             $table->string('currency');
-            $table->string('code')->unique();
+            $table->string('code');
         });
     }
 
