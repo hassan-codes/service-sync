@@ -3,7 +3,7 @@
 use App\Http\Controllers\v1\AdminController;
 use App\Http\Controllers\v1\AgentController;
 use App\Http\Controllers\v1\AuthController;
-use Illuminate\Http\Request;
+use App\Http\Controllers\v1\TransactionController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -46,5 +46,12 @@ Route::middleware('auth:api')->group(function(){
         Route::get('agents/{agent}', [AgentController::class, 'show']);
         Route::get('agents/deactivation/{agent}', [AgentController::class, 'deactivate']);
         Route::put('agents/{agent}', [AgentController::class, 'update']);
+
+        /**
+         * Dashboard endpoints
+         */
+        Route::post('transactions', [TransactionController::class, 'store']);
+        Route::get('transactions/', [TransactionController::class, 'index']);
+        Route::get('transactions/{transaction}', [TransactionController::class, 'show']);
     });
 });
