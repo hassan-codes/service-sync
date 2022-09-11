@@ -13,7 +13,7 @@ class StoreTransactionRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,12 +24,10 @@ class StoreTransactionRequest extends FormRequest
     public function rules()
     {
         return [
-            'id' => 'bail|required|min:13|max:13',
             'amount' => 'required|numeric',
-            'currency' => 'required|exists:'
+            'currency' => 'required|exists:\App\Models\Currency,code',
             'description' => 'required|string|min:8',
             'type' => 'required|string',
-            'posted_by' => 'required|exists:\App\Models\User,id'
         ];
     }
 }
