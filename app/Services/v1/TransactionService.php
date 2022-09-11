@@ -16,8 +16,7 @@ class TransactionService
         $transaction = new Transaction();
 
         try {
-            $transactionId = strtoupper(uniqid());
-            $transaction->id = $transactionId;
+            $transaction->id = strtoupper(uniqid());
             $transaction->amount = $request->amount;
             $transaction->currency = $request->currency;
             $transaction->description = strtoupper($request->description);
@@ -35,7 +34,7 @@ class TransactionService
             ], 422);
         }
 
-        return new TransactionResource(Transaction::findOrFail($transactionId));
+        return $transaction;
     }
 
     public function fetch(int $userId = 0)
