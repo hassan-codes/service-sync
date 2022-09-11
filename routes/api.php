@@ -51,7 +51,7 @@ Route::middleware('auth:api')->group(function(){
          * Dashboard endpoints
          */
         Route::post('transactions', [TransactionController::class, 'store']);
-        Route::get('transactions/', [TransactionController::class, 'index']);
+        Route::get('transactions', [TransactionController::class, 'index']);
         Route::get('transactions/{transaction}', [TransactionController::class, 'show']);
     });
 });
