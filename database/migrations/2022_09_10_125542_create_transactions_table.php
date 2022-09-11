@@ -22,8 +22,8 @@ return new class extends Migration
             $table->enum('status', ['APPROVED', 'REJECTED'])->nullable();
             $table->string('reference')->nullable();
             $table->unsignedBigInteger('posted_by');
-            $table->timestamp('posted_at');
-            $table->timestamp('fulfilled_at')->nullable();
+            $table->timestamp('posted_at')->useCurrent();
+            $table->timestamp('fulfilled_at')->nullable()->useCurrentOnUpdate();
 
             $table->foreign('posted_by')
                 ->references('id')
