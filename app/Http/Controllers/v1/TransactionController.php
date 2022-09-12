@@ -31,6 +31,11 @@ class TransactionController extends Controller
         return $this->transactionService->fetchByUser($id);
     }
 
+    public function indexByDateRange(Request $request)
+    {
+        return $this->transactionService->fetchByDateRange($request);
+    }
+
     /**
      * Store a newly created resource in storage.
      *

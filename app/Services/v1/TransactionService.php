@@ -7,6 +7,8 @@ use App\Http\Resources\v1\TransactionResource;
 use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Database\QueryException;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class TransactionService
 {
@@ -58,6 +60,57 @@ class TransactionService
                 }
             } else {
                 $transactions = new TransactionResource(Transaction::findOrFail($transactionId));
+            }
+        } catch (QueryException $exception) {
+            error_log($exception->getMessage());
+            // TODO: email error to sysadmin
+            return response()->json([
+                'error' => 'Failed to list agents',
+            ], 422);
+        }
+
+        return $transactions;
+    }
+
+    public function fetchByDateRange(Request $request)
+    {
+        $user = auth()->user();
+
+        $dateRange = [
+            'date_from' => $request->date_from,
+            'date_to' => $request->date_to
+        ];
+
+        $validator = Validator::make($dateRange, [
+            'date_from' => 'required|date_format:Y-m-d\TH:i:s',
+            'date_to' => 'required|date_format:Y-m-d\TH:i:s',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
+
+        if (! $this->isPasswordReset($user)) {
+            return response()->json([
+                'message' => 'Unauthorized. You must reset your password',
+            ], 401);
+        }
+
+        try {
+            if ($user->role == 'admin') {
+                $transactions = TransactionResource::collection(
+                    Transaction::where([
+                        ['posted_at', '>=', $dateRange['date_from']],
+                        ['posted_at', '<=', $dateRange['date_to']]
+                    ])->orderBy('posted_at', 'DESC')->paginate());
+            } elseif ($user->role == 'agent') {
+                $transactions = TransactionResource::collection(
+                    Transaction::where([
+                        ['posted_by', '=', $user->id],
+                        ['posted_at', '>=', $dateRange['date_from']],
+                        ['posted_at', '<=', $dateRange['date_to']]
+                    ])->orderBy('posted_at', 'DESC')->paginate());
             }
         } catch (QueryException $exception) {
             error_log($exception->getMessage());
