@@ -37,7 +37,7 @@ class TransactionService
         return $transaction;
     }
 
-    public function fetch(int $userId = 0)
+    public function fetch(string $transactionId = null)
     {
         $user = auth()->user();
 
@@ -47,24 +47,24 @@ class TransactionService
             ], 401);
         }
 
-        if (! $this->isAdmin($user)) {
-            return response()->json([
-                'message' => 'Unauthorized. Illegal action attempted',
-            ], 401);
-        }
-
         try {
-            if ($userId == 0) {
-                $transactions = TransactionResource::collection(
-                    Transaction::orderBy('posted_at', 'DESC')->paginate());
-            } elseif ($userId > 0) {
-                $transactions = TransactionResource::collection(
-                    Transaction::where('posted_by', $userId)
-                        ->orderBy('posted_at', 'DESC')
-                        ->paginate());
+            if ($transactionId == null) {
+                if ($user->role == 'admin') {
+                    $transactions = TransactionResource::collection(
+                        Transaction::orderBy('posted_at', 'DESC')->paginate());
+                } elseif ($user->role == 'agent') {
+                    $transactions = TransactionResource::collection(
+                        Transaction::where('posted_by', $user->id)->orderBy('posted_at', 'DESC')->paginate());
+                }
+            } elseif ($transactionId > 0) {
+                $transactions = new TransactionResource(Transaction::findOrFail($transactionId));
             }
         } catch (QueryException $exception) {
-
+            error_log($exception->getMessage());
+            // TODO: email error to sysadmin
+            return response()->json([
+                'error' => 'Failed to list agents',
+            ], 422);
         }
 
         return $transactions;
