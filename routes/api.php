@@ -54,5 +54,6 @@ Route::middleware('auth:api')->group(function(){
         Route::get('transactions', [TransactionController::class, 'index']);
         Route::get('transactions/{transaction}', [TransactionController::class, 'show']);
         Route::get('transactions/by-user/{user}', [TransactionController::class, 'indexByUser']);
+        Route::get('transactions/by-date/date-from/{date_from}/date-to/{date_to}', [TransactionController::class, 'indexByDateRange']);
     });
 });
