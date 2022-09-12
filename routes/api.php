@@ -53,5 +53,6 @@ Route::middleware('auth:api')->group(function(){
         Route::post('transactions', [TransactionController::class, 'store']);
         Route::get('transactions', [TransactionController::class, 'index']);
         Route::get('transactions/{transaction}', [TransactionController::class, 'show']);
+        Route::get('transactions/by-user/{user}', [TransactionController::class, 'indexByUser']);
     });
 });

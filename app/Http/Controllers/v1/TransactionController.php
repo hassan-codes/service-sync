@@ -26,6 +26,11 @@ class TransactionController extends Controller
         return $this->transactionService->fetch();
     }
 
+    public function indexByUser(int $id)
+    {
+        return $this->transactionService->fetchByUser($id);
+    }
+
     /**
      * Store a newly created resource in storage.
      *
@@ -41,11 +46,11 @@ class TransactionController extends Controller
      * Display the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \App\Http\Resources\v1\TransactionResource|\Illuminate\Http\JsonResponse|\Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
     public function show($id)
     {
-        //
+        return $this->transactionService->fetch($id);
     }
 
     /**

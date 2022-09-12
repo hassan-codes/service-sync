@@ -56,9 +56,33 @@ class TransactionService
                     $transactions = TransactionResource::collection(
                         Transaction::where('posted_by', $user->id)->orderBy('posted_at', 'DESC')->paginate());
                 }
-            } elseif ($transactionId > 0) {
+            } else {
                 $transactions = new TransactionResource(Transaction::findOrFail($transactionId));
             }
+        } catch (QueryException $exception) {
+            error_log($exception->getMessage());
+            // TODO: email error to sysadmin
+            return response()->json([
+                'error' => 'Failed to list agents',
+            ], 422);
+        }
+
+        return $transactions;
+    }
+
+    public function fetchByUser(int $postedBy)
+    {
+        $user = auth()->user();
+
+        if (! $this->isPasswordReset($user)) {
+            return response()->json([
+                'message' => 'Unauthorized. You must reset your password',
+            ], 401);
+        }
+
+        try {
+            $transactions = TransactionResource::collection(
+                Transaction::where('posted_by', $postedBy)->orderBy('posted_at', 'DESC')->paginate());
         } catch (QueryException $exception) {
             error_log($exception->getMessage());
             // TODO: email error to sysadmin
