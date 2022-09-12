@@ -80,6 +80,12 @@ class TransactionService
             ], 401);
         }
 
+        if (! $this->isAdmin($user)) {
+            return response()->json([
+                'message' => 'Unauthorized. Illegal action attempted',
+            ], 401);
+        }
+
         try {
             $transactions = TransactionResource::collection(
                 Transaction::where('posted_by', $postedBy)->orderBy('posted_at', 'DESC')->paginate());
