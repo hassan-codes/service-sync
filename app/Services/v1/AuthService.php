@@ -32,6 +32,11 @@ class AuthService
         ]);
     }
 
+    public function refreshToken()
+    {
+        return $this->createNewToken(auth()->refresh());
+    }
+
     protected function createNewToken($token){
         $user = auth()->user();
         if (! $user->is_active) {

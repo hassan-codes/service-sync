@@ -25,6 +25,7 @@ Route::group([
     'prefix' => 'v1/auth'
 ], function () {
     Route::get('/logout', [AuthController::class, 'logout']);
+    Route::get('/refresh', [AuthController::class, 'refresh']);
 });
 
 Route::middleware('auth:api')->group(function(){
