@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\v1\LoginRequest;
 use App\Services\v1\AuthService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Password;
 
 class AuthController extends Controller
 {
@@ -26,12 +27,12 @@ class AuthController extends Controller
         return $this->authService->logout();
     }
 
-    /**
-     * Refresh a token.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function refresh() {
+    public function refreshToken() {
         return $this->authService->refreshToken();
+    }
+
+    public function forgotPassword(Request $request)
+    {
+        $this->authService->forgotPassword($request);
     }
 }
