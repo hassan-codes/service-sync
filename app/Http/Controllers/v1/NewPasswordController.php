@@ -34,7 +34,7 @@ class NewPasswordController extends Controller
     ]);
 }
 
-    public function reset(Request $request)
+    public function resetPassword(Request $request)
 {
     $request->validate([
         'token' => 'required',
@@ -50,7 +50,7 @@ class NewPasswordController extends Controller
                 'remember_token' => Str::random(60),
             ])->save();
 
-            $user->tokens()->delete();
+            //$user->tokens()->delete();
 
             event(new PasswordReset($user));
         }

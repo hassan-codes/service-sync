@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Route;
 Route::group(['prefix' => 'v1/auth'], function(){
     Route::post('login', [AuthController::class, 'login']);
     Route::post('/forgot-password', [NewPasswordController::class, 'forgotPassword']);
-    Route::post('/reset-password', [AuthController::class, 'updatePassword'])->name('password.reset');
+    Route::post('/reset-password', [NewPasswordController::class, 'resetPassword'])->name('password.reset');
 });
 
 Route::group([
