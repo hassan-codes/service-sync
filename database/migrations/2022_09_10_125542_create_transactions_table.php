@@ -27,7 +27,7 @@ return new class extends Migration
 
             $table->foreign('posted_by')
                 ->references('id')
-                ->on('Users')
+                ->on('users')
                 ->onDelete('restrict')
                 ->onUpdate('cascade');
         });
