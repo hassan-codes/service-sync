@@ -29,6 +29,7 @@ Route::group([
 ], function () {
     Route::get('/logout', [AuthController::class, 'logout']);
     Route::get('/refresh', [AuthController::class, 'refreshToken']);
+    Route::post('/change-password', [AuthController::class, 'updatePassword']);
 });
 
 Route::middleware('auth:api')->group(function(){

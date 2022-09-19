@@ -39,7 +39,7 @@ class NewPasswordController extends Controller
     $request->validate([
         'token' => 'required',
         'email' => 'required|email',
-        'password' => ['required', 'confirmed', RulesPassword::defaults()],
+        'password' => ['required', 'confirmed', RulesPassword::min(8)],
     ]);
 
     $status = Password::reset(
@@ -50,7 +50,7 @@ class NewPasswordController extends Controller
                 'remember_token' => Str::random(60),
             ])->save();
 
-            //$user->tokens()->delete();
+//            $user->tokens()->delete();
 
             event(new PasswordReset($user));
         }

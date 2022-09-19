@@ -4,6 +4,7 @@ namespace App\Http\Controllers\v1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\v1\LoginRequest;
+use App\Http\Requests\v1\UpdatePasswordRequest;
 use App\Services\v1\AuthService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
@@ -31,8 +32,8 @@ class AuthController extends Controller
         return $this->authService->refreshToken();
     }
 
-    public function forgotPassword(Request $request)
+    public function updatePassword(UpdatePasswordRequest $request)
     {
-        $this->authService->forgotPassword($request);
+        return $this->authService->updatePassword($request);
     }
 }

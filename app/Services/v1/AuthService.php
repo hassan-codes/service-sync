@@ -3,6 +3,12 @@
 namespace App\Services\v1;
 
 use App\Http\Requests\v1\LoginRequest;
+use App\Http\Requests\v1\UpdatePasswordRequest;
+use App\Models\User;
+use http\Env\Response;
+use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Testing\Fluent\Concerns\Has;
 
 class AuthService
 {
@@ -56,4 +62,25 @@ class AuthService
         );
     }
 
+    public function updatePassword(UpdatePasswordRequest $request)
+    {
+        $user = auth()->user();
+
+        $password = Hash::make($request->password);
+
+        try {
+            User::where('id', $user->id)->update([
+                'password'  => $password
+            ]);
+        } catch (QueryException $exception) {
+            error_log($exception->getMessage());
+            return response()->json([
+                'error' => 'Failed to update password'
+            ], 422);
+        }
+
+        return response()->json([
+            'message'   =>  'Password updated successfully'
+        ], 200);
+    }
 }
