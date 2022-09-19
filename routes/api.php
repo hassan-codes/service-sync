@@ -3,6 +3,7 @@
 use App\Http\Controllers\v1\AdminController;
 use App\Http\Controllers\v1\AgentController;
 use App\Http\Controllers\v1\AuthController;
+use App\Http\Controllers\v1\NewPasswordController;
 use App\Http\Controllers\v1\TransactionController;
 use Illuminate\Support\Facades\Route;
 
@@ -16,15 +17,19 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-
-
-Route::post('v1/auth/login', [AuthController::class, 'login']);
+Route::group(['prefix' => 'v1/auth'], function(){
+    Route::post('login', [AuthController::class, 'login']);
+    Route::post('/forgot-password', [NewPasswordController::class, 'forgotPassword']);
+    Route::post('/reset-password', [NewPasswordController::class, 'resetPassword'])->name('password.reset');
+});
 
 Route::group([
     'middleware' => 'api',
     'prefix' => 'v1/auth'
 ], function () {
     Route::get('/logout', [AuthController::class, 'logout']);
+    Route::get('/refresh', [AuthController::class, 'refreshToken']);
+    Route::post('/change-password', [AuthController::class, 'updatePassword']);
 });
 
 Route::middleware('auth:api')->group(function(){

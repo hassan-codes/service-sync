@@ -4,8 +4,10 @@ namespace App\Http\Controllers\v1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\v1\LoginRequest;
+use App\Http\Requests\v1\UpdatePasswordRequest;
 use App\Services\v1\AuthService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Password;
 
 class AuthController extends Controller
 {
@@ -24,5 +26,14 @@ class AuthController extends Controller
     public function logout()
     {
         return $this->authService->logout();
+    }
+
+    public function refreshToken() {
+        return $this->authService->refreshToken();
+    }
+
+    public function updatePassword(UpdatePasswordRequest $request)
+    {
+        return $this->authService->updatePassword($request);
     }
 }
